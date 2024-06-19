@@ -1,0 +1,9 @@
+{% extends 'app/layout.html' %}
+
+
+{% block body %}
+    <h1>This is index page</h1>
+    <p>{{ request.user.username }}</p>
+    <p>{{ request.user.gender }}</p>
+    <a href="{% url 'logout' %}">Log out</a>
+{% endblock %}

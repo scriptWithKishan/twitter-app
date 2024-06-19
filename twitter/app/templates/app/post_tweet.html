@@ -1,0 +1,10 @@
+{% extends 'app/layout.html' %}
+
+{% block body %}
+    <h1>Post a new Tweet</h1>
+    <form action="{% url 'post_tweet' %}" method="post">
+        {% csrf_token %}
+        <textarea name="tweet" placeholder="What's happening?" required></textarea>
+        <button type="submit">Post</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'app/layout.html' %}
+
+{% block body %}
+    <h1>{{ user.username }}</h1>
+    <p>{{ user.first_name }} {{ user.last_name }}</p>
+    <p>{{ profile.bio }}</p>
+    <ul>
+        <li>Username: {{ user.username }}</li>
+        <li>Name: {{ user.first_name }} {{ user.last_name }}</li>
+        <li>Gender: {{ profile.gender }}</li>
+        <li>DOB: {{ profile.dob }}</li>
+    </ul>
+    <h2>Your Tweets</h2>
+    <ul>
+        {% for tweet in tweets %}
+            <li>
+                <p>{{ tweet.tweet }}</p>
+                <form action="{% url 'delete_post' tweet.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        {% empty %}
+            <li>No Tweets</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'edit_profile' %}">Edit profile</a>
+    <a href="{% url 'post_tweet' %}">Post a new tweet</a>
+{% endblock %}

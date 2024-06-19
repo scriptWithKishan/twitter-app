@@ -1,0 +1,39 @@
+<!-- templates/app/edit_profile.html -->
+{% extends 'app/layout.html' %}
+
+{% block body %}
+    <h1>Edit Profile: {{ user.username }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" value="{{ user.username }}"><br>
+
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="first_name" value="{{ user.first_name }}"><br>
+        
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="last_name" value="{{ user.last_name }}"><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="{{ user.email }}"><br>
+
+        <label for="dateOfBirth">Date Of Birth:</label>
+        <input type="date" id="dateOfBirth" name="dob" value="{{ profile.dob|date:'Y-m-d' }}"><br>
+
+        <label for="gender">Gender:</label><br>
+        <input type="radio" id="male" name="gender" value="M" {% if profile.gender == 'M' %}checked{% endif %}>
+        <label for="male">Male</label><br>
+        
+        <input type="radio" id="female" name="gender" value="F" {% if profile.gender == 'F' %}checked{% endif %}>
+        <label for="female">Female</label><br>
+        
+        <input type="radio" id="others" name="gender" value="O" {% if profile.gender == 'O' %}checked{% endif %}>
+        <label for="others">Others</label><br>
+
+        <label for="bio">Bio:</label><br>
+        <textarea id="bio" name="bio">{{ profile.bio }}</textarea><br>
+        
+        <button type="submit">Save Changes</button>
+    </form>
+{% endblock %}
