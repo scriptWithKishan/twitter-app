@@ -1,10 +1,11 @@
 {% extends 'app/layout.html' %}
 
 {% block body %}
-    <h1>Post a new Tweet</h1>
-    <form action="{% url 'post_tweet' %}" method="post">
+    <h1>Post a New Tweet</h1>
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <textarea name="tweet" placeholder="What's happening?" required></textarea>
-        <button type="submit">Post</button>
+        <textarea required name="tweet" placeholder="What's happening?"></textarea>
+        <input type="file" name="image">
+        <button type="submit">Tweet</button>
     </form>
 {% endblock %}

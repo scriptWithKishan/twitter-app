@@ -1,0 +1,28 @@
+{% extends 'app/layout.html' %}
+
+{% block body %}
+    <h1>All Users</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="search" placeholder="Search users..." value="{{ search_query }}">
+        <button type="submit">Search</button>
+    </form>
+    <ul>
+        {% for user in users %}
+            <li>
+                {{ user.username }}
+                {% if user.id in following_users %}
+                    <button type="button" disabled>Following</button>
+                {% else %}
+                    <form method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="following_user_id" value="{{ user.id }}">
+                        <button type="submit">Follow</button>
+                    </form>
+                {% endif %}
+            </li>
+        {% empty %}
+            <li>No users found.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

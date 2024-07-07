@@ -4,6 +4,13 @@
 {% block body %}
     <h1>This is index page</h1>
     <p>{{ request.user.username }}</p>
-    <p>{{ request.user.gender }}</p>
+    <h1>Posts</h1>
+    <ul>
+        {% for tweet in tweets %}
+            <li>{{ tweet.user.username }}: {{ tweet.tweet }}</li>
+        {% empty %}
+            <li>No tweets</li>
+        {% endfor %}
+    </ul>
     <a href="{% url 'logout' %}">Log out</a>
 {% endblock %}

@@ -48,10 +48,16 @@ def profile_view(request):
     user = request.user
     profile = Profile.objects.get(user=user)
     tweets = Tweet.objects.filter(user=user).order_by('-date_time')
+    
+    followers_count = Follower.objects.filter(following_user=user).count 
+    following_count = Follower.objects.filter(follower_user=user).count
+    
     return render(request, 'app/profile.html', {
         'user': user,
         'profile': profile,
-        'tweets': tweets
+        'tweets': tweets,
+        'followers_count': followers_count,
+        'following_count': following_count
     })
 
     
@@ -94,28 +100,32 @@ logger = logging.getLogger(__name__)
 def post_tweet_view(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse('login'))
-
+    
     if request.method == 'POST':
         tweet_content = request.POST['tweet']
-        
+        image = request.FILES.get('image')
+
         Tweet.objects.create(
             tweet=tweet_content,
             user=request.user,
-            date_time=timezone.now()
+            date_time=timezone.now(),
+            image=image
         )
-
         
         return redirect('profile')
-
+    
     return render(request, 'app/post_tweet.html')
 
 def delete_post_view(request, tweet_id):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse('login'))
     
-    tweet = get_object_or_404(Tweet, id=tweet_id, user=request.user)
-    tweet.delete()
+    tweet = Tweet.objects.get(id=tweet_id)
+    if tweet.user == request.user:
+        tweet.delete()
+    
     return redirect('profile')
+
         
 def register_view(request):
     if request.method == "POST":
@@ -144,3 +154,63 @@ def register_view(request):
         
     return render(request, 'app/register.html')
         
+
+def all_users_view(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('login'))
+    
+    user = request.user
+    search_query = request.POST.get('search', '')
+
+    if request.method == 'POST' and 'following_user_id' in request.POST:
+        following_user_id = request.POST.get('following_user_id')
+        if following_user_id:
+            following_user = User.objects.get(id=following_user_id)
+            Follower.objects.create(follower_user=user, following_user=following_user)
+    
+    users = User.objects.exclude(id=user.id)
+    if search_query:
+        users = users.filter(username__icontains(search_query))
+    
+    following_users = Follower.objects.filter(follower_user=user).values_list('following_user_id', flat=True)
+    
+    return render(request, 'app/all_users.html', {
+        'users': users,
+        'following_users': following_users,
+        'search_query': search_query,
+    })
+
+    
+def follow_user_view(request, user_id):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('login'))
+
+    current_user = request.user
+    user_to_follow = User.objects.get(id=user_id)
+    
+    Follower.objects.create(follower_user=current_user, following_user=user_to_follow)
+    
+    return redirect('all_users')
+
+def following_users_view(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('login'))
+    
+    user = request.user
+    following = Follower.objects.filter(follower_user=user).select_related('following_user')
+    
+    return render(request, 'app/following_users.html', {
+        'following': following
+    })
+
+def follower_users_view(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('login'))
+    
+    user = request.user
+    followers = Follower.objects.filter(following_user=user).select_related('follower_user')
+    
+    return render(request, 'app/follower_users.html', {
+        'followers': followers
+    })
+

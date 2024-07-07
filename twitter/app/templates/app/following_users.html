@@ -1,0 +1,12 @@
+{% extends 'app/layout.html' %}
+
+{% block body %}
+    <h1>Following Users</h1>
+    <ul>
+        {% for follow in following %}
+            <li>{{ follow.following_user.username }}</li>
+        {% empty %}
+            <li>You are not following anyone.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -12,13 +12,21 @@
     </ul>
     <h2>Your Tweets</h2>
     <ul>
+        <li><a href="{% url 'follower_users' %}">Followers: {{ followers_count }}</a></li>
+        <li><a href="{% url 'following_users' %}">Following: {{ following_count }}</a></li>
+    </ul>
+    <ul>
         {% for tweet in tweets %}
             <li>
+                {% if tweet.image %}
+                    <img src="{{ tweet.image.url }}" alt="{{ tweet.tweet }}" style="max-width: 200px;">
+                {% endif %}
                 <p>{{ tweet.tweet }}</p>
                 <form action="{% url 'delete_post' tweet.id %}" method="post">
                     {% csrf_token %}
                     <button type="submit">Delete</button>
                 </form>
+                <p>{{tweet.date_time}}</p>
             </li>
         {% empty %}
             <li>No Tweets</li>

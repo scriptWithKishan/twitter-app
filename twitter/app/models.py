@@ -26,6 +26,7 @@ class Tweet(models.Model):
     tweet = models.TextField(default='')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_time = models.DateTimeField()
+    image = models.ImageField(upload_to='tweet_images/', blank=True, null=True)
     
 class Reply(models.Model):
     tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
