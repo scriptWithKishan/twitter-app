@@ -1,28 +1,37 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Twitter</title>
+    <link rel="stylesheet" href="{% static 'app/register.css' %}">
 </head>
 <body>
-    <h1>Register</h1>
-    <form action="{% url 'register' %}" method="post">
-        {% csrf_token %}
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
+    <div class="register-container">
+        <h1 class="register-heading">Register</h1>
+        <div class="register-card">
+            <form class="form-container" action="{% url 'register' %}" method="post">
+                {% csrf_token %}
+                <label class="label" for="username">Username:</label>
+                <input class="input" type="text" id="username" name="username" required>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
+                <label class="label" for="password">Password:</label>
+                <input class="input" type="password" id="password" name="password" required>
 
-        <label for="confirm_password">Confirm Password:</label>
-        <input type="password" id="confirm_password" name="confirm_password" required>
+                <label class="label" for="confirm_password">Confirm Password:</label>
+                <input class="input" type="password" id="confirm_password" name="confirm_password" required>
 
-        <button type="submit">Register</button>
-    </form>
-    
-    {% if message %}
-        <p>{{ message }}</p>
-    {% endif %}
+                <button class="register-btn" type="submit">Register</button>
+                <p class="login">Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+            </form>
+            <img class="register-img" src="https://cdni.iconscout.com/illustration/premium/thumb/sign-up-3391266-2937870.png" alt="register img" />
+        </div>
+        
+        {% if message %}
+            <p class="error-msg">{{ message }}</p>
+        {% endif %}
+    </div>
 </body>
 </html>

@@ -1,23 +1,36 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Twitter Login</title>
+    <link rel="stylesheet" href="{% static 'app/login.css' %}"> 
 </head>
 <body>
-    {% if message %}
-        <div>
-            <p>{{ message }}</p>
+    <div class="login-container">
+        <h1 class="login-heading">Login</h1>
+        <div class="login-card">
+            <div class="form-container">
+                <form action="{% url 'login' %}" method="post" >
+                    {% csrf_token %}
+                    <label class="label" for="username">Username: </label>
+                    <input class="input" id="username" type="text" name="username" placeholder="USERNAME" />
+                    <label class="label" for="password">Password: </label>
+                    <input class="input" id="password" type="password" name="password" placeholder="PASSWORD" />
+                    <input class="submit-btn" type="submit" value="Login" />
+                </form>
+                <p class="register">Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+            </div>
+            <img class="login-img" src="https://img.freepik.com/free-vector/mobile-login-concept-illustration_114360-83.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1720915200&semt=ais_user" alt="login image" />
         </div>
-    {% endif %}
-
-    <form action="{% url 'login' %}" method="post">
-        {% csrf_token %}
-        <input type="text" name="username" placeholder="Username" />
-        <input type="password" name="password" placeholder="Password" />
-        <input type="submit" value="Login" />
-    </form>
-    <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+        {% if message %}
+            <div class="message-container" >
+                <p class="error-msg">{{ message }}</p>
+            </div>
+        {% endif %}
+    </div>
 </body>
 </html>
+

@@ -1,0 +1,31 @@
+{% extends 'app/layout.html' %}
+
+{% block body %}
+    <h1>Tweet Details</h1>
+    <img src="{{ tweet.image.url }}" alt="{{ tweet.tweet }}" />
+    <p>{{ tweet.tweet }}</p>
+    <p>Posted by: {{ tweet.user.username }}</p>
+    <p>Posted on: {{ tweet.date_time }}</p>
+
+    <h2>Comments</h2>
+    <ul>
+        {% for comment in comments %}
+            <li>
+                <p>{{ comment.reply }}</p>
+                <p>Commented by: {{ comment.user.username }}</p>
+                <p>Commented on: {{ comment.date_time }}</p>
+            </li>
+        {% empty %}
+            <li>No comments yet.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Add Comment</h2>
+    <form action="{% url 'view_comments' tweet.id %}" method="post">
+        {% csrf_token %}
+        <textarea name="comment" rows="4" cols="50"></textarea><br>
+        <button type="submit">Add Comment</button>
+    </form>
+    <hr>
+    <a href="{% url 'index' %}">Back to Feed</a>
+{% endblock %}

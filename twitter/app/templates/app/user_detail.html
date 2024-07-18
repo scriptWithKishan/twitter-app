@@ -1,9 +1,15 @@
 {% extends 'app/layout.html' %}
 
 {% block body %}
-    <h1>Welcome, {{ user.username }}</h1>
-
-    <h2>Your Feed</h2>
+    <h1>{{ user_profile.username }}</h1>
+    <p>{{ profile.bio }}</p>
+    <ul>
+        <li>Username: {{ user_profile.username }}</li>
+        <li>Name: {{ user_profile.first_name }} {{ user_profile.last_name }}</li>
+        <li>Gender: {{ profile.gender }}</li>
+        <li>DOB: {{ profile.dob }}</li>
+    </ul>
+    <h2>{{ user_profile.username }}'s Tweets</h2>
     <ul>
         {% for tweet in tweets %}
             <li>
@@ -11,8 +17,7 @@
                     <img src="{{ tweet.image.url }}" alt="{{ tweet.tweet }}" style="max-width: 200px;">
                 {% endif %}
                 <p>{{ tweet.tweet }}</p>
-                <p>Likes: {{ tweet.total_likes }}</p>
-                <p>Comments: {{ tweet.total_comments }}</p>
+                <p>Likes: {{ tweet.like_set.count }}</p>
                 <form action="{% url 'like_unlike' tweet.id %}" method="post">
                     {% csrf_token %}
                     <button type="submit">{% if tweet.is_liked %}Unlike{% else %}Like{% endif %}</button>
@@ -21,10 +26,10 @@
                     {% csrf_token %}
                     <button type="submit">View Comments</button>
                 </form>
-                <hr>
+                <p>{{ tweet.date_time }}</p>
             </li>
         {% empty %}
-            <li>No tweets to display.</li>
+            <li>No Tweets</li>
         {% endfor %}
     </ul>
 {% endblock %}

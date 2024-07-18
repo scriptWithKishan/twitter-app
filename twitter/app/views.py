@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
-from .models import Profile, Tweet, Follower
+from .models import Profile, Tweet, Follower, Like, Reply
 from django.contrib.auth.models import User
 
 # Create your views here.
@@ -15,9 +15,45 @@ def index(request):
     following_users = Follower.objects.filter(follower_user=user).values_list('following_user', flat=True)
     tweets = Tweet.objects.filter(user__in=following_users).order_by('-date_time')
     
+    for tweet in tweets:
+        tweet.is_liked = Like.objects.filter(tweet=tweet, user=user).exists()  # Add this line
+        
     return render(request, 'app/index.html', {
         'tweets': tweets
     })
+    
+def like_unlike_tweet(request, tweet_id):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('login'))
+    
+    tweet = get_object_or_404(Tweet, id=tweet_id)
+    user = request.user
+    
+    if Like.objects.filter(tweet=tweet, user=user).exists():
+        Like.objects.filter(tweet=tweet, user=user).delete()
+    else:
+        Like.objects.create(tweet=tweet, user=user, date_time=timezone.now())
+    
+    return redirect('index')
+        
+def view_add_comments(request, tweet_id):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('login'))
+    
+    tweet = get_object_or_404(Tweet, id=tweet_id)
+    
+    if request.method == 'POST':
+        comment_content = request.POST.get('comment')
+        if comment_content:
+            Reply.objects.create(tweet=tweet, user=request.user, reply=comment_content, date_time=timezone.now())
+    
+    comments = Reply.objects.filter(tweet=tweet).order_by('-date_time')
+    
+    return render(request, 'app/view_comments.html', {
+        'tweet': tweet,
+        'comments': comments
+    })
+
         
 def login_view(request):
     if request.method == 'POST':
@@ -214,3 +250,19 @@ def follower_users_view(request):
         'followers': followers
     })
 
+def user_detail_view(request, user_id):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('login'))
+
+    user = get_object_or_404(User, id=user_id)
+    profile = get_object_or_404(Profile, user=user)
+    tweets = Tweet.objects.filter(user=user).order_by('-date_time')
+
+    for tweet in tweets:
+        tweet.is_liked = Like.objects.filter(tweet=tweet, user=request.user).exists()
+
+    return render(request, 'app/user_detail.html', {
+        'user_profile': user,
+        'profile': profile,
+        'tweets': tweets,
+    })
